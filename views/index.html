@@ -76,6 +76,14 @@
             sli.innerHTML = msg;
             document.getElementById('messages').appendChild(sli);
         });
+
+        var input = document.getElementById("edtmessage");
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                SendMessage();
+            }
+        });
     </script>
 </body>
 
