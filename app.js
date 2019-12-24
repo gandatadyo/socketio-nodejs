@@ -8,17 +8,37 @@ app.get('/', function (req, res) {
 
 
 io.on('connection', function (socket) {
+    console.log('user connected => '+socket.id);
+   
     // console.log('a user connected');
     // Detect disconnect
     socket.on('disconnect', function () {
-        console.log('user disconnected');
+        console.log('user disconnected =>'+socket.id);
     });
 
     // Router message using topic "chat message"
-    socket.on('chat message', function (msg) {
+    socket.on('chat message', function (idroom,msg) {
+        io.to(idroom).emit('chat message', msg);
         console.log('message: ' + msg);
-        io.emit('chat message', msg);
+        // io.emit('chat message', msg);
     });
+
+    socket.on('join', function (idroom) {
+        socket.join (idroom); 
+        console.log('join : '+idroom);
+        io.to(idroom).emit('join', idroom);
+    });
+
+    socket.on('leave', function (idroom) {
+        socket.leave (idroom); 
+        console.log('leave : '+idroom);
+    });
+
+    
+
+
+
+  
 });
 
 

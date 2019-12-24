@@ -73,6 +73,7 @@
 <body>
     <ul id="messages"></ul>
     <div style="bottom: 0px;left:0px; position: fixed;width: 100%;">
+        <input type="text" id="edtRoom" placeholder="roon">
         <textarea name="content" id="edtmessage">
 
         </textarea>
@@ -81,12 +82,12 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        var idroom = 1;
         var editor ;
         var socket = io();
         function SendMessage() {
             var smessage = editor.getData();
-            socket.emit('chat message', smessage);
-            editor.getData() = '';
+            socket.emit('chat message',idroom, smessage);
         }
 
         socket.on('chat message', function (msg) {
@@ -95,11 +96,28 @@
             document.getElementById('messages').appendChild(sli);
         });
 
+        socket.on('join', function (msg) {
+            var sli = document.createElement('li')
+            sli.innerHTML = msg;
+            document.getElementById('messages').appendChild(sli);
+        });
+
+
         var input = document.getElementById("edtmessage");
         input.addEventListener("keyup", function (event) {
             if (event.keyCode === 13) {
                 event.preventDefault();
                 SendMessage();
+            }
+        });
+
+        var inputroom = document.getElementById("edtRoom");
+        inputroom.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                socket.emit('leave',idroom);
+                idroom =  document.getElementById('edtRoom').value;
+                socket.emit('join',idroom);
             }
         });
 
